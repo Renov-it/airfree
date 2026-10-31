@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <linearGradient id="afGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#064e3b" />
+      <stop offset="100%" stop-color="#0d7a5f" />
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="26" fill="url(#afGrad)" />
+  <path d="M36 52 H78 A10 10 0 1 0 68 42" fill="none" stroke="#ffffff" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.95"/>
+  <path d="M30 66 H86 A10 10 0 1 1 76 76" fill="none" stroke="#ffffff" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.95"/>
+  <text x="64" y="104" font-family="Arial, sans-serif" font-size="19" font-weight="bold" fill="#ffffff" text-anchor="middle" letter-spacing="2">AIRFREE</text>
+</svg>

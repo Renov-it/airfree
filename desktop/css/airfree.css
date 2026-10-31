@@ -1,0 +1,1107 @@
+/*
+ * Feuille de style Airfree Local API (Jeedom Desktop / Mobile & Standalone WebApp)
+ * Fidèle au design Airfree Cloud (Desktop & Mobile)
+ */
+
+:root {
+  --az-bg: #f6f6f6;
+  --az-surface: #ffffff;
+  --az-green-dark: #064838;
+  --az-green-mid: #0c5e49;
+  --az-green-accent: #0d7a5f;
+  --az-card-off: #585b5e;
+  --az-card-unavail: #efefef;
+  --az-text-main: #23272b;
+  --az-text-muted: #6c737a;
+  --az-danger: #b91c1c;
+  --az-ecowatt-bg: #050b20;
+  --az-border: #e2e5e9;
+  --az-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+  --az-radius-lg: 18px;
+  --az-radius-md: 14px;
+}
+
+.az-app-wrapper {
+  background-color: var(--az-bg);
+  color: var(--az-text-main);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  min-height: 100vh;
+  padding-bottom: 96px;
+  box-sizing: border-box;
+  position: relative;
+  -webkit-font-smoothing: antialiased;
+}
+
+.az-app-wrapper * {
+  box-sizing: border-box;
+}
+
+/* Mode Aperçu Mobile sur PC */
+.az-app-wrapper.az-mobile-preview {
+  max-width: 430px;
+  margin: 18px auto;
+  min-height: 844px;
+  border-radius: 38px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.22), 0 0 0 10px #1f2428;
+  overflow-x: hidden;
+}
+
+/* Top Header */
+.az-top-header {
+  background: var(--az-bg);
+  max-width: 720px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 40;
+}
+
+.az-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.az-hamburger-btn {
+  background: none;
+  border: none;
+  padding: 6px;
+  cursor: pointer;
+  color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+.az-hamburger-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.az-bell-badge {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #a6191e;
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(166, 25, 30, 0.35);
+  margin-left: -6px;
+}
+
+.az-brand-logo {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #111;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  user-select: none;
+  text-align: center;
+}
+
+.az-header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.az-conn-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  background: #ffffff;
+  border: 1px solid var(--az-border);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.az-conn-pill:hover {
+  border-color: var(--az-green-accent);
+}
+
+.az-conn-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+}
+
+.az-conn-dot.offline {
+  background: #ef4444;
+}
+
+.az-view-toggle-btn {
+  background: #ffffff;
+  border: 1px solid var(--az-border);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #374151;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.az-view-toggle-btn.active {
+  background: var(--az-green-dark);
+  color: #fff;
+  border-color: var(--az-green-dark);
+}
+
+/* Container central */
+.az-container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 6px 16px 32px;
+}
+
+.az-container.wide {
+  max-width: 720px;
+}
+
+/* Section "Mes installations" (Capture 1) */
+.az-section-title {
+  font-size: 20px;
+  font-weight: 500;
+  color: #2b2f33;
+  margin: 14px 0 16px;
+}
+
+.az-installations-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 18px;
+  margin-bottom: 28px;
+}
+
+.az-install-card {
+  background: linear-gradient(135deg, #054435 0%, #0d5f4a 100%);
+  border-radius: 18px;
+  height: 196px;
+  padding: 18px 20px;
+  position: relative;
+  overflow: hidden;
+  color: #ffffff;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 6px 18px rgba(5, 68, 53, 0.18);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.az-install-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(5, 68, 53, 0.26);
+}
+
+.az-install-card.secondary {
+  background: linear-gradient(135deg, #0b5d47 0%, #126e56 100%);
+}
+
+.az-install-card.active-install {
+  outline: 3px solid #10b981;
+  outline-offset: 2px;
+}
+
+.az-install-top {
+  display: flex;
+  justify-content: flex-end;
+  z-index: 2;
+}
+
+.az-sub-badge {
+  background: #9e1b20;
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 5px 14px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.az-sub-badge.local-ok {
+  background: rgba(16, 185, 129, 0.28);
+  border-color: #6ee7b7;
+}
+
+.az-install-bottom {
+  z-index: 2;
+}
+
+.az-install-name {
+  font-size: 19px;
+  font-weight: 700;
+  margin: 0 0 3px;
+}
+
+.az-install-loc {
+  font-size: 14px;
+  font-weight: 400;
+  opacity: 0.92;
+  margin: 0;
+}
+
+.az-install-watermark {
+  position: absolute;
+  right: 14px;
+  bottom: 8px;
+  width: 118px;
+  height: 118px;
+  opacity: 0.16;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Barre d'installation pliable & Barres de Groupe (Captures 2 & 3) */
+.az-accordion-bar {
+  background: #ffffff;
+  border: 1px solid #e1e4e8;
+  border-radius: 14px;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.az-accordion-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.az-chevron {
+  transition: transform 0.25s ease;
+  color: #333;
+  display: inline-flex;
+}
+
+.az-chevron.collapsed {
+  transform: rotate(180deg);
+}
+
+.az-accordion-title {
+  font-size: 17px;
+  font-weight: 500;
+  color: #22262a;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+}
+
+.az-sys-id-tag {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #6c737a;
+}
+
+.az-bar-modes {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 6px;
+}
+
+.az-bar-mode-btn {
+  width: 34px;
+  height: 30px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  background: #f1f5f9;
+  color: #334155;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.15s ease;
+}
+
+.az-bar-mode-btn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.az-bar-mode-btn.active {
+  background: var(--az-green-dark);
+  border-color: var(--az-green-dark);
+  color: #ffffff;
+}
+
+.az-accordion-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.az-btn-text-onoff {
+  background: none;
+  border: none;
+  font-size: 14px;
+  font-weight: 700;
+  color: #55595c;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 6px;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.az-btn-text-onoff:hover {
+  color: #111;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.az-btn-text-onoff.active-state {
+  color: var(--az-green-accent);
+}
+
+.az-btn-expand-icon {
+  background: none;
+  border: none;
+  padding: 4px;
+  color: #45494e;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+}
+
+.az-btn-expand-icon:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: #111;
+}
+
+/* Bannière EcoWatt (Capture 2) */
+.az-ecowatt-card {
+  background: var(--az-ecowatt-bg);
+  color: #ffffff;
+  border-radius: 14px;
+  padding: 14px 20px;
+  margin-top: -6px;
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.az-ecowatt-logo {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  padding-left: 90px;
+}
+
+.az-ecowatt-logo span {
+  color: #2dd4bf;
+}
+
+.az-ecowatt-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.az-ecowatt-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.az-ecowatt-check {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #2dd4bf;
+  color: #050b20;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.az-ecowatt-slots {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12.5px;
+}
+
+.az-ecowatt-slot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.az-ecowatt-dots {
+  display: flex;
+  justify-content: center;
+  gap: 7px;
+  margin-bottom: 16px;
+}
+
+.az-ecowatt-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #b0b5ba;
+}
+
+.az-ecowatt-dot.active {
+  background: #373a3e;
+}
+
+/* En-tête "Mes zones" et filtres (Capture 2) */
+.az-zones-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 10px 4px 12px;
+}
+
+.az-zones-title {
+  font-size: 18px;
+  font-weight: 500;
+  color: #23272b;
+  margin: 0;
+}
+
+.az-dots-menu-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #333;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 8px;
+}
+
+.az-filter-pills {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+
+.az-pill {
+  padding: 7px 16px;
+  border-radius: 999px;
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid #6c7278;
+  background: transparent;
+  color: #333;
+  position: relative;
+  transition: all 0.15s ease;
+}
+
+.az-pill.active {
+  background: #373a3d;
+  color: #ffffff;
+  border-color: #373a3d;
+}
+
+.az-pill-notif-dot {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #a6191e;
+}
+
+/* Grille des cartes de zones (Captures 2 & 3) */
+.az-zones-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 640px) {
+  .az-zones-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 11px;
+  }
+}
+
+.az-app-wrapper.az-mobile-preview .az-zones-grid {
+  grid-template-columns: repeat(2, 1fr);
+  gap: 11px;
+}
+
+.az-zone-card {
+  background: var(--az-card-off);
+  color: #ffffff;
+  border-radius: 14px;
+  min-height: 92px;
+  padding: 10px 14px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 6px;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.25s ease;
+  user-select: none;
+}
+
+.az-zone-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  z-index: 2;
+}
+
+.az-zone-bottom-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  z-index: 2;
+}
+
+.az-zone-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.14);
+}
+
+/* États actifs : vert émeraude Airfree Cloud sur toutes les zones ON */
+.az-zone-card.zone-on {
+  background: linear-gradient(135deg, #065f46 0%, #0d7a5f 100%) !important;
+}
+
+/* Zone non disponible (ex: Bureau2 / ZONA 04) */
+.az-zone-card.zone-unavailable {
+  background: var(--az-card-unavail);
+  color: #6b7075;
+  cursor: default;
+  border: 1px solid #e6e8eb;
+}
+
+.az-zone-card.zone-unavailable:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.az-zone-name {
+  font-size: 14.5px;
+  font-weight: 700;
+  line-height: 1.25;
+  z-index: 2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.az-zone-temp-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  z-index: 2;
+}
+
+.az-temp-display {
+  display: inline-flex;
+  align-items: flex-start;
+  line-height: 1;
+}
+
+.az-temp-int {
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: -1.2px;
+}
+
+.az-temp-frac {
+  display: flex;
+  flex-direction: column;
+  font-size: 13.5px;
+  font-weight: 700;
+  line-height: 1.02;
+  margin-left: 2px;
+  margin-top: 2px;
+}
+
+.az-humidity-display {
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  opacity: 0.95;
+}
+
+.az-zone-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 2;
+}
+
+.az-zone-status-left {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.82);
+  flex-shrink: 0;
+}
+
+.az-zone-card.zone-on .az-zone-status-left {
+  color: #ffffff;
+}
+
+.az-zone-unavail-label {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #b91c1c;
+  z-index: 2;
+}
+
+.az-power-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1.7px solid rgba(255, 255, 255, 0.85);
+  background: transparent;
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.az-power-btn:hover {
+  background: rgba(255, 255, 255, 0.22);
+  transform: scale(1.08);
+}
+
+.az-zone-card.zone-on .az-power-btn {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: #ffffff;
+}
+
+/* Rayons de soleil / filigrane en bas à droite de la carte */
+.az-card-watermark-rays {
+  position: absolute;
+  right: -12px;
+  bottom: -12px;
+  width: 92px;
+  height: 92px;
+  opacity: 0.13;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Barre de navigation inférieure (Dock Mobile / Desktop - Captures 2 & 3) */
+.az-bottom-nav-wrap {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.az-app-wrapper.az-mobile-preview .az-bottom-nav-wrap {
+  position: sticky;
+  bottom: 0;
+}
+
+.az-bottom-nav {
+  pointer-events: auto;
+  width: 100%;
+  max-width: 680px;
+  background: #ffffff;
+  border-top-left-radius: 24px;
+  border-top-right-radius: 24px;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e6e8eb;
+  border-bottom: none;
+  padding: 10px 16px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.az-nav-item {
+  background: none;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: #686f76;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 4px 12px;
+  border-radius: 12px;
+  transition: color 0.15s ease;
+}
+
+.az-nav-item.active {
+  color: var(--az-green-accent);
+  font-weight: 600;
+}
+
+.az-nav-item:hover {
+  color: var(--az-green-accent);
+}
+
+/* Modale de pilotage détaillé d'une Zone / thermostat */
+.az-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(3px);
+  z-index: 100;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.az-modal-backdrop.open {
+  display: flex;
+}
+
+.az-modal-sheet {
+  background: #ffffff;
+  width: 100%;
+  max-width: 440px;
+  border-radius: 24px;
+  padding: 22px 24px 26px;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.22);
+  animation: azSlideUp 0.22s ease-out;
+  max-height: 92vh;
+  overflow-y: auto;
+}
+
+@keyframes azSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 540px) {
+  .az-modal-backdrop {
+    align-items: flex-end;
+    padding: 0;
+  }
+  .az-modal-sheet {
+    max-width: 100%;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+}
+
+.az-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.az-modal-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.az-modal-subtitle {
+  font-size: 12.5px;
+  color: var(--az-text-muted);
+  margin-top: 2px;
+}
+
+.az-modal-close {
+  background: #f1f5f9;
+  border: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  font-size: 18px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Thermostat circulaire dans la modale */
+.az-thermostat-dial {
+  width: 210px;
+  height: 210px;
+  border-radius: 50%;
+  margin: 12px auto 18px;
+  background: conic-gradient(from 220deg, #0d7a5f 0deg, #f59e0b 180deg, #e2e8f0 280deg);
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.az-thermostat-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+
+.az-dial-label {
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--az-text-muted);
+  font-weight: 600;
+}
+
+.az-dial-setpoint {
+  font-size: 44px;
+  font-weight: 800;
+  color: var(--az-text-main);
+  line-height: 1.1;
+  margin: 4px 0;
+}
+
+.az-dial-ambient {
+  font-size: 13px;
+  color: var(--az-text-muted);
+  font-weight: 500;
+}
+
+.az-setpoint-Controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.az-step-btn {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 1.5px solid var(--az-border);
+  background: #ffffff;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--az-text-main);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.az-step-btn:hover {
+  background: var(--az-green-dark);
+  color: #ffffff;
+  border-color: var(--az-green-dark);
+}
+
+.az-modes-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 8px;
+  margin-bottom: 16px;
+}
+
+.az-mode-btn {
+  padding: 10px 8px;
+  border-radius: 12px;
+  border: 1px solid var(--az-border);
+  background: #f8fafc;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #334155;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.15s ease;
+}
+
+.az-mode-btn.active {
+  background: var(--az-green-dark);
+  color: #ffffff;
+  border-color: var(--az-green-dark);
+}
+
+/* Liste style Airtools (Information sur le dispositif & Systèmes) */
+.az-airtools-list {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e2e5e9;
+  overflow: hidden;
+  margin-bottom: 22px;
+}
+
+.az-airtools-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid #e8ecef;
+  font-size: 15px;
+  color: #2b2f33;
+}
+
+.az-airtools-row:last-child {
+  border-bottom: none;
+}
+
+.az-airtools-row.clickable {
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.az-airtools-row.clickable:hover {
+  background: #f8fafc;
+}
+
+.az-airtools-row.sub-header {
+  background: #f4f5f7;
+  color: #5c636a;
+  font-size: 14.5px;
+  font-weight: 500;
+}
+
+.az-airtools-row.zone-item {
+  background: #e9ebee;
+  font-weight: 500;
+}
+
+.az-airtools-row.zone-item:hover {
+  background: #dfe3e8;
+}
+
+.az-airtools-val {
+  color: #5c636a;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.az-airtools-val.accent {
+  color: #0d7a5f;
+  font-weight: 600;
+}
+
+/* Panneau Configuration IP & Diagnostic */
+.az-config-card {
+  background: #ffffff;
+  border-radius: 18px;
+  border: 1px solid var(--az-border);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.az-form-group {
+  margin-bottom: 14px;
+}
+
+.az-form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 5px;
+}
+
+.az-form-input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  font-size: 14px;
+}
+
+.az-btn-primary {
+  background: var(--az-green-dark);
+  color: #ffffff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.az-btn-primary:hover {
+  background: var(--az-green-mid);
+}
+
+.az-toast {
+  position: fixed;
+  top: 72px;
+  right: 20px;
+  background: #1e293b;
+  color: #ffffff;
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-size: 13.5px;
+  font-weight: 500;
+  z-index: 200;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  display: none;
+}

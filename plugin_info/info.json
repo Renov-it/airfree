@@ -1,0 +1,16 @@
+{
+  "id": "airfree",
+  "name": "Airfree Local API",
+  "description": "Plugin de pilotage local des systèmes de régulation CVC Airfree (Webserver Local API port 3000) avec interface graphique Desktop & Mobile inspirée d'Airfree Cloud.",
+  "licence": "GPL-3.0",
+  "author": "Laurent / Antigravity",
+  "require": "4.2",
+  "category": "climate",
+  "hasDependency": false,
+  "hasOwnDeamon": false,
+  "maxDependancyInstallTime": 0,
+  "documentation": "https://github.com/jeedom/documentations",
+  "changelog": "https://github.com/jeedom/documentations",
+  "display": "panel",
+  "mobile": "airfree"
+}
