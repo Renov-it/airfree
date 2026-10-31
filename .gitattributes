@@ -8,3 +8,8 @@
 *.svg text working-tree-encoding=UTF-8 eol=lf
 *.cmd text eol=crlf
 *.bat text eol=crlf
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.ico binary

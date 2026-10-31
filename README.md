@@ -2,6 +2,8 @@
 
 **Airfree** est un plugin **Jeedom** (Desktop, Dashboard & Mobile) doublé d'une **application Web & Mobile autonome** permettant de piloter en 100 % local les systèmes de régulation CVC via l'API locale sur le port TCP `3000` (`/api/v1/hvac`), sans abonnement Cloud requis.
 
+![Aperçu de l'interface Airfree](docs/images/airfree-dashboard.png)
+
 ---
 
 ## Fonctionnalités principales
