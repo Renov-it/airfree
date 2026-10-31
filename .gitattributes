@@ -1,0 +1,10 @@
+* text=auto eol=lf
+*.php text working-tree-encoding=UTF-8 eol=lf
+*.js text working-tree-encoding=UTF-8 eol=lf
+*.css text working-tree-encoding=UTF-8 eol=lf
+*.html text working-tree-encoding=UTF-8 eol=lf
+*.json text working-tree-encoding=UTF-8 eol=lf
+*.md text working-tree-encoding=UTF-8 eol=lf
+*.svg text working-tree-encoding=UTF-8 eol=lf
+*.cmd text eol=crlf
+*.bat text eol=crlf

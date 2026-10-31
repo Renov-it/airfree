@@ -1,0 +1,63 @@
+<div class="eqLogic eqLogic-widget airfree-mobile-card #class#"
+     data-eqType="#eqType#"
+     data-eqLogic_id="#id#"
+     data-eqLogic_uid="#uid#"
+     data-version="#version#"
+     data-on="#on#"
+     data-available="#available#"
+     style="border-radius: 16px; padding: 12px 14px; position: relative; overflow: hidden; min-height: 135px; background: #585b5e; color: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+
+  <div style="font-size: 13px; font-weight: 700; margin-bottom: 4px;">#zone_name#</div>
+
+  <div class="az-m-body-#uid#">
+    <div style="display:flex; align-items:baseline; gap:6px;">
+      <div style="display:inline-flex; align-items:flex-start; line-height:1;">
+        <span style="font-size:34px; font-weight:700;">#temp_int#</span>
+        <span style="display:flex; flex-direction:column; font-size:13px; font-weight:700; line-height:1.05; margin-left:1px;">
+          <span>°</span><span>#temp_dec#</span>
+        </span>
+      </div>
+      <span style="font-size:11px; opacity:0.9;">💧 #humidity# %</span>
+    </div>
+
+    <div style="position:absolute; bottom:10px; left:14px; right:12px; display:flex; align-items:center; justify-content:space-between;">
+      <span class="az-m-lbl-#uid#" style="font-size:13px; font-weight:700; opacity:0.85;">OFF</span>
+      <button type="button" class="az-m-btn-#uid#" style="width:28px; height:28px; border-radius:50%; border:1.6px solid rgba(255,255,255,0.85); background:transparent; color:#fff; display:inline-flex; align-items:center; justify-content:center;">
+        <i class="fas fa-power-off" style="font-size:12px;"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="az-m-unavail-#uid#" style="display:none; position:absolute; bottom:12px; left:14px; font-size:11px; font-weight:700; color:#c8322b;">
+    Zone non disponible
+  </div>
+
+  <script>
+    (function() {
+      var card = document.querySelector('.eqLogic[data-eqLogic_uid="#uid#"]');
+      var avail = parseInt('#available#', 10);
+      var isOn = parseInt('#on#', 10);
+      var setpoint = parseFloat('#setpoint#');
+      if (avail === 0) {
+        if (card) { card.style.background = '#efefef'; card.style.color = '#6b7280'; }
+        var b = document.querySelector('.az-m-body-#uid#');
+        var u = document.querySelector('.az-m-unavail-#uid#');
+        if (b) b.style.display = 'none';
+        if (u) u.style.display = 'block';
+      } else {
+        if (card && isOn === 1) {
+          card.style.background = 'linear-gradient(135deg, #065f46 0%, #0d7a5f 100%)';
+        }
+        var lbl = document.querySelector('.az-m-lbl-#uid#');
+        if (lbl) lbl.textContent = isOn === 1 ? (setpoint.toFixed(1) + '°C') : 'OFF';
+      }
+      var btn = document.querySelector('.az-m-btn-#uid#');
+      if (btn && '#toggle_id#' !== '') {
+        btn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          jeedom.cmd.execute({ id: '#toggle_id#' });
+        });
+      }
+    })();
+  </script>
+</div>

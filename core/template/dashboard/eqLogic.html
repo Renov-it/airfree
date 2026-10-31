@@ -1,0 +1,187 @@
+<div class="eqLogic eqLogic-widget allowResize airfree-widget-card #custom_layout# #eqLogic_class# #class#"
+     data-eqType="#eqType#"
+     data-eqLogic_id="#id#"
+     data-eqLogic_uid="#uid#"
+     data-version="#version#"
+     data-on="#on#"
+     data-available="#available#"
+     data-mode="#mode#"
+     style="width: 195px; height: 96px; border-radius: 14px; padding: 10px 14px; position: relative; overflow: hidden; box-sizing: border-box; font-family: 'Inter', 'Roboto', -apple-system, sans-serif; transition: all 0.25s ease; #style#">
+
+  <style>
+    .airfree-widget-card[data-available="1"][data-on="0"] {
+      background: #585b5e !important;
+      color: #ffffff !important;
+    }
+    .airfree-widget-card[data-available="1"][data-on="1"][data-mode="3"] {
+      background: linear-gradient(135deg, #b45309 0%, #d97706 100%) !important;
+      color: #ffffff !important;
+    }
+    .airfree-widget-card[data-available="1"][data-on="1"][data-mode="2"] {
+      background: linear-gradient(135deg, #0369a1 0%, #0284c7 100%) !important;
+      color: #ffffff !important;
+    }
+    .airfree-widget-card[data-available="1"][data-on="1"] {
+      background: linear-gradient(135deg, #065f46 0%, #0d7a5f 100%);
+      color: #ffffff !important;
+    }
+    .airfree-widget-card[data-available="0"] {
+      background: #efefef !important;
+      color: #6b7280 !important;
+      border: 1px solid #e5e7eb !important;
+    }
+    .az-w-header {
+      font-size: 14px;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 4px;
+      z-index: 2;
+      position: relative;
+    }
+    .az-w-temp-row {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      z-index: 2;
+      position: relative;
+    }
+    .az-w-temp-main {
+      display: inline-flex;
+      align-items: flex-start;
+      line-height: 1;
+    }
+    .az-w-temp-int {
+      font-size: 40px;
+      font-weight: 700;
+      letter-spacing: -1px;
+    }
+    .az-w-temp-frac {
+      display: flex;
+      flex-direction: column;
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.05;
+      margin-left: 1px;
+      margin-top: 2px;
+    }
+    .az-w-hum {
+      font-size: 12px;
+      font-weight: 600;
+      opacity: 0.92;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .az-w-footer {
+      position: absolute;
+      bottom: 12px;
+      left: 16px;
+      right: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 2;
+    }
+    .az-w-status {
+      font-size: 14px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.82);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .az-w-power-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 1.8px solid rgba(255,255,255,0.85);
+      background: transparent;
+      color: #ffffff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+    .az-w-power-btn:hover {
+      background: rgba(255,255,255,0.2);
+      transform: scale(1.06);
+    }
+    .az-w-unavail-msg {
+      position: absolute;
+      bottom: 14px;
+      left: 16px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #c8322b;
+    }
+    .az-w-rays {
+      position: absolute;
+      right: -18px;
+      bottom: -18px;
+      width: 96px;
+      height: 96px;
+      opacity: 0.12;
+      pointer-events: none;
+      z-index: 1;
+    }
+  </style>
+
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;z-index:2;position:relative;margin-bottom:4px;">
+    <div class="az-w-header" style="margin-bottom:0;" title="#name_display#">#zone_name#</div>
+    <div class="az-w-status">
+      <span class="az-w-mode-lbl-#uid#" style="font-size:12.5px;"></span>
+    </div>
+  </div>
+
+  <div class="az-w-body-#uid#" style="display:flex;align-items:center;justify-content:space-between;z-index:2;position:relative;">
+    <div class="az-w-temp-row">
+      <div class="az-w-temp-main">
+        <span class="az-w-temp-int" style="font-size:32px;">#temp_int#</span>
+        <span class="az-w-temp-frac" style="font-size:13px;"><span>°</span><span>#temp_dec#</span></span>
+      </div>
+      <span class="az-w-hum">💧 #humidity# %</span>
+    </div>
+
+    <button type="button" class="az-w-power-btn cmd" data-cmd_id="#toggle_id#" title="Marche / Arrêt">
+      <i class="fas fa-power-off" style="font-size: 13px;"></i>
+    </button>
+  </div>
+
+  <div class="az-w-unavail-#uid# az-w-unavail-msg" style="display:none;">Zone non disponible</div>
+
+  <svg class="az-w-rays" viewBox="0 0 100 100">
+    <circle cx="65" cy="65" r="22" fill="none" stroke="#ffffff" stroke-width="5"/>
+    <line x1="65" y1="22" x2="65" y2="33" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
+    <line x1="22" y1="65" x2="33" y2="65" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
+    <line x1="34" y1="34" x2="42" y2="42" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
+  </svg>
+
+  <script>
+    (function() {
+      var avail = parseInt('#available#', 10);
+      var isOn = parseInt('#on#', 10);
+      var setpoint = parseFloat('#setpoint#');
+      var bodyEl = document.querySelector('.az-w-body-#uid#');
+      var unavailEl = document.querySelector('.az-w-unavail-#uid#');
+      var lblEl = document.querySelector('.az-w-mode-lbl-#uid#');
+      if (avail === 0) {
+        if (bodyEl) bodyEl.style.display = 'none';
+        if (unavailEl) unavailEl.style.display = 'block';
+      } else {
+        if (lblEl) {
+          lblEl.textContent = isOn === 1 ? (setpoint.toFixed(1) + '°C') : 'OFF';
+        }
+      }
+      var btn = document.querySelector('.eqLogic[data-eqLogic_uid="#uid#"] .az-w-power-btn');
+      if (btn && '#toggle_id#' !== '') {
+        btn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          jeedom.cmd.execute({ id: '#toggle_id#' });
+        });
+      }
+    })();
+  </script>
+</div>

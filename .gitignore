@@ -1,0 +1,10 @@
+# Fichier de configuration locale (adresses IP personnelles / cache MAC)
+config_local.json
+
+# Fichiers temporaires OS & IDE
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+.vscode/
+.idea/
