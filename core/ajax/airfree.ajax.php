@@ -15,7 +15,7 @@ try {
     ajax::init();
     $action = init('action');
 
-    if ($action === 'synchronize' || $action === 'saveConnectionConfig' || $action === 'testConnection') {
+    if ($action === 'synchronize' || $action === 'saveConnectionConfig' || $action === 'saveConfig' || $action === 'testConnection') {
         if (!isConnect('admin')) {
             throw new Exception(__('403 - Droits administrateur requis pour cette action', __FILE__));
         }
@@ -93,18 +93,22 @@ try {
         ajax::success($data);
     }
 
-    if ($action === 'saveConnectionConfig') {
-        $ip       = trim(init('ip', '192.168.0.61'));
-        $port     = intval(init('port', 3000));
-        $systems  = trim(init('systems', '1,3'));
-        $instName = trim(init('installName', 'Bureaux'));
-        $instLoc  = trim(init('installLoc', 'Montpellier, Hérault'));
+    if ($action === 'saveConnectionConfig' || $action === 'saveConfig') {
+        $ip       = trim(init('ip', config::byKey('airfree_ip', 'airfree', '192.168.0.61')));
+        $port     = intval(init('port', config::byKey('airfree_port', 'airfree', 3000)));
+        $systems  = trim(init('systems', config::byKey('airfree_systems', 'airfree', '1,3')));
+        $instName = trim(init('installName', config::byKey('airfree_install_name', 'airfree', 'Bureaux')));
+        $instLoc  = trim(init('installLoc', config::byKey('airfree_install_location', 'airfree', 'Montpellier, Hérault')));
+        $wifiSsid = trim(init('wifiSsid', config::byKey('airfree_wifi_ssid', 'airfree', '')));
 
         config::save('airfree_ip', $ip, 'airfree');
         config::save('airfree_port', $port, 'airfree');
         config::save('airfree_systems', $systems, 'airfree');
         config::save('airfree_install_name', $instName, 'airfree');
         config::save('airfree_install_location', $instLoc, 'airfree');
+        if ($wifiSsid !== '') {
+            config::save('airfree_wifi_ssid', $wifiSsid, 'airfree');
+        }
 
         $data = airfree::fetchAllSystems($ip, $port, $systems, false);
         ajax::success($data);

@@ -96,10 +96,108 @@ class airfree extends eqLogic {
     }
 
     /**
+     * Détecte l'adresse MAC de la passerelle via la table ARP du système (Linux Jeedom / Windows)
+     */
+    public static function detectMacFromArp($ip) {
+        if (!preg_match('/^\d{1,3}(\.\d{1,3}){3}$/', $ip)) {
+            return null;
+        }
+        // 1. Lecture directe de /proc/net/arp sur Linux (Jeedom Debian / Raspberry Pi)
+        if (is_readable('/proc/net/arp')) {
+            $lines = @file('/proc/net/arp', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            if (is_array($lines)) {
+                foreach ($lines as $line) {
+                    if (strpos($line, $ip . ' ') === 0 && preg_match('/([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}/', $line, $m)) {
+                        $mac = strtoupper($m[0]);
+                        if ($mac !== '00:00:00:00:00:00') {
+                            return $mac;
+                        }
+                    }
+                }
+            }
+        }
+        // 2. Fallback arp -a / ip neigh
+        $out = @shell_exec('arp -a ' . escapeshellarg($ip) . ' 2>&1');
+        if (is_string($out) && preg_match('/([0-9a-fA-F]{2}[:-]){5}[0-9a-fA-F]{2}/', $out, $m)) {
+            return strtoupper(str_replace('-', ':', $m[0]));
+        }
+        return null;
+    }
+
+    /**
+     * Récupère les informations matérielles du dispositif (MAC, Alias, Latence, Qualité)
+     */
+    public static function fetchDeviceInfo($ip, $port, $online, $latencyMs) {
+        $mac      = '';
+        $firmware = 'API Locale v1 (/api/v1/hvac)';
+        $wifiSsid = config::byKey('airfree_wifi_ssid', 'airfree', 'LAN / Wi-Fi Local');
+        $rssi     = null;
+
+        if ($online) {
+            try {
+                $wsRes = self::requestApi('/api/v1/webserver', array(), 'POST', $ip, $port);
+                if (is_array($wsRes) && !isset($wsRes['errors'])) {
+                    if (!empty($wsRes['mac'])) {
+                        $mac = strtoupper($wsRes['mac']);
+                    }
+                    if (!empty($wsRes['ws_firmware'])) {
+                        $firmware = $wsRes['ws_firmware'];
+                    }
+                    if (!empty($wsRes['wifi_ssid']) || !empty($wsRes['interface'])) {
+                        $wifiSsid = $wsRes['wifi_ssid'] ?? $wsRes['interface'];
+                    }
+                    if (isset($wsRes['wifi_rssi'])) {
+                        $rssi = intval($wsRes['wifi_rssi']);
+                    }
+                }
+            } catch (Exception $e) {
+                // Endpoint optionnel selon le firmware
+            }
+
+            $arpMac = self::detectMacFromArp($ip);
+            if (!empty($arpMac)) {
+                $mac = $arpMac;
+            }
+        }
+
+        $alias = 'Dispositif_Local';
+        if (!empty($mac)) {
+            $cleanHex = str_replace(':', '', $mac);
+            $alias = 'Dispositif_' . strtoupper(substr($cleanHex, -4));
+        }
+
+        $pingMs = max(1, intval(round($latencyMs / 3)));
+        $quality = 'Hors ligne';
+        if ($online) {
+            if ($pingMs < 150) {
+                $quality = 'Excellente';
+            } elseif ($pingMs < 350) {
+                $quality = 'Bonne';
+            } else {
+                $quality = 'Moyenne';
+            }
+        }
+
+        return array(
+            'alias'     => $alias,
+            'mac'       => $mac ?: 'Non détectée',
+            'firmware'  => $firmware,
+            'ip'        => $ip,
+            'port'      => intval($port),
+            'wifi'      => $wifiSsid,
+            'rssi'      => $rssi,
+            'quality'   => $quality,
+            'latencyMs' => $pingMs,
+            'online'    => $online
+        );
+    }
+
+    /**
      * Récupère toutes les zones de tous les systèmes (Groupes) Airfree.
      * Gère automatiquement le cas où systemID=0 renvoie "systemid out of range" (fréquent sur Webserver Airfree).
      */
     public static function fetchAllSystems($ip = null, $port = null, $systemsCsv = null, $autoScan = false) {
+        $tStart = microtime(true);
         if ($ip === null || trim($ip) === '') {
             $ip = config::byKey('airfree_ip', 'airfree', '192.168.0.61');
         }
@@ -112,46 +210,53 @@ class airfree extends eqLogic {
 
         $zones = array();
         $systemsMap = array();
+        $online = true;
+        $errorMsg = null;
 
-        // 1. Essai broadcast systemID: 0, zoneID: 0 (comportement initial aioairfree)
-        $broadcastRes = self::requestApi('/api/v1/hvac', array('systemID' => 0, 'zoneID' => 0), 'POST', $ip, $port);
-        if (isset($broadcastRes['data']) && is_array($broadcastRes['data']) && count($broadcastRes['data']) > 0) {
-            foreach ($broadcastRes['data'] as $z) {
-                $zones[] = self::normalizeZone($z);
-            }
-        } elseif (isset($broadcastRes['systems']) && is_array($broadcastRes['systems'])) {
-            foreach ($broadcastRes['systems'] as $sys) {
-                if (isset($sys['data']) && is_array($sys['data'])) {
-                    foreach ($sys['data'] as $z) {
-                        $zones[] = self::normalizeZone($z);
+        try {
+            // 1. Essai broadcast systemID: 0, zoneID: 0 (comportement initial aioairfree)
+            $broadcastRes = self::requestApi('/api/v1/hvac', array('systemID' => 0, 'zoneID' => 0), 'POST', $ip, $port);
+            if (isset($broadcastRes['data']) && is_array($broadcastRes['data']) && count($broadcastRes['data']) > 0) {
+                foreach ($broadcastRes['data'] as $z) {
+                    $zones[] = self::normalizeZone($z);
+                }
+            } elseif (isset($broadcastRes['systems']) && is_array($broadcastRes['systems'])) {
+                foreach ($broadcastRes['systems'] as $sys) {
+                    if (isset($sys['data']) && is_array($sys['data'])) {
+                        foreach ($sys['data'] as $z) {
+                            $zones[] = self::normalizeZone($z);
+                        }
                     }
                 }
-            }
-        } else {
-            // 2. Fallback sur la liste des systemIDs configurés ou scan 1..8
-            $sysIds = array();
-            if ($autoScan) {
-                $sysIds = range(1, 8);
             } else {
-                foreach (explode(',', $systemsCsv) as $part) {
-                    $id = intval(trim($part));
-                    if ($id > 0 && $id <= 32) {
-                        $sysIds[] = $id;
+                // 2. Fallback sur la liste des systemIDs configurés ou scan 1..8
+                $sysIds = array();
+                if ($autoScan) {
+                    $sysIds = range(1, 8);
+                } else {
+                    foreach (explode(',', $systemsCsv) as $part) {
+                        $id = intval(trim($part));
+                        if ($id > 0 && $id <= 32) {
+                            $sysIds[] = $id;
+                        }
+                    }
+                    if (empty($sysIds)) {
+                        $sysIds = array(1, 2, 3);
                     }
                 }
-                if (empty($sysIds)) {
-                    $sysIds = array(1, 2, 3);
-                }
-            }
 
-            foreach ($sysIds as $sysId) {
-                $res = self::requestApi('/api/v1/hvac', array('systemID' => intval($sysId), 'zoneID' => 0), 'POST', $ip, $port);
-                if (isset($res['data']) && is_array($res['data']) && count($res['data']) > 0) {
-                    foreach ($res['data'] as $z) {
-                        $zones[] = self::normalizeZone($z);
+                foreach ($sysIds as $sysId) {
+                    $res = self::requestApi('/api/v1/hvac', array('systemID' => intval($sysId), 'zoneID' => 0), 'POST', $ip, $port);
+                    if (isset($res['data']) && is_array($res['data']) && count($res['data']) > 0) {
+                        foreach ($res['data'] as $z) {
+                            $zones[] = self::normalizeZone($z);
+                        }
                     }
                 }
             }
+        } catch (Exception $e) {
+            $online = false;
+            $errorMsg = $e->getMessage();
         }
 
         // Regroupement par systemID (Groupe 1, Groupe 2...)
@@ -164,6 +269,7 @@ class airfree extends eqLogic {
                     'groupNumber' => $groupIndex,
                     'groupName'   => 'Groupe ' . $groupIndex,
                     'mode'        => $z['mode'],
+                    'modeLabel'   => $z['modeLabel'],
                     'modes'       => $z['modes'],
                     'masterZoneID'=> $z['zoneID'],
                     'anyOn'       => false,
@@ -175,6 +281,8 @@ class airfree extends eqLogic {
             if (!empty($z['modes'])) {
                 $systemsMap[$sysId]['modes'] = $z['modes'];
                 $systemsMap[$sysId]['masterZoneID'] = $z['zoneID'];
+                $systemsMap[$sysId]['mode'] = $z['mode'];
+                $systemsMap[$sysId]['modeLabel'] = $z['modeLabel'];
             }
             if ($z['available']) {
                 if ($z['on'] == 1) {
@@ -186,14 +294,36 @@ class airfree extends eqLogic {
             $systemsMap[$sysId]['zones'][] = $z;
         }
 
+        $latencyMs = round((microtime(true) - $tStart) * 1000);
+        $deviceInfo = self::fetchDeviceInfo($ip, $port, $online, $latencyMs);
+        $installName = config::byKey('airfree_install_name', 'airfree', 'Bureaux');
+        $installLoc  = config::byKey('airfree_install_location', 'airfree', 'Montpellier, Hérault');
+
         return array(
+            'online'        => $online,
+            'error'         => $errorMsg,
             'ip'            => $ip,
             'port'          => intval($port),
-            'installName'   => config::byKey('airfree_install_name', 'airfree', 'Bureaux'),
-            'installLoc'    => config::byKey('airfree_install_location', 'airfree', 'Montpellier, Hérault'),
-            'timestamp'     => date('Y-m-d H:i:s'),
+            'installName'   => $installName,
+            'installLoc'    => $installLoc,
+            'deviceInfo'    => $deviceInfo,
+            'timestamp'     => date('H:i:s'),
             'systems'       => array_values($systemsMap),
-            'zones'         => $zones
+            'zones'         => $zones,
+            'config'        => array(
+                'activeInstallationId' => 'bureaux',
+                'installations'        => array(
+                    array(
+                        'id'       => 'bureaux',
+                        'name'     => $installName,
+                        'location' => $installLoc,
+                        'type'     => 'office',
+                        'ip'       => $ip,
+                        'port'     => intval($port),
+                        'systems'  => $systemsCsv
+                    )
+                )
+            )
         );
     }
 
@@ -271,12 +401,62 @@ class airfree extends eqLogic {
 
     /**
      * Synchronise les zones Airfree avec les équipements eqLogic Jeedom
+     * Crée également une tuile unique "Airfree" (bouton d'accès direct au Panel complet)
+     * et masque par défaut les tuiles individuelles de zones sur le Dashboard.
      */
     public static function synchronize() {
         $data = self::fetchAllSystems(null, null, null, true);
         $discoveredSysIds = array();
         $count = 0;
 
+        // Trouver l'objet Jeedom "Airfree" s'il existe, sinon le premier objet racine disponible
+        $defaultObjectId = null;
+        if (class_exists('jeeObject')) {
+            $allObjects = jeeObject::all();
+            foreach ($allObjects as $obj) {
+                if ($defaultObjectId === null) {
+                    $defaultObjectId = $obj->getId();
+                }
+                if (stripos($obj->getName(), 'airfree') !== false) {
+                    $defaultObjectId = $obj->getId();
+                    break;
+                }
+            }
+        }
+
+        // 1. Créer / mettre à jour la tuile unique de raccourci vers le Panel complet Airfree
+        $panelEq = self::byLogicalId('airfree_panel', 'airfree');
+        if (!is_object($panelEq)) {
+            $panelEq = new airfree();
+            $panelEq->setEqType_name('airfree');
+            $panelEq->setLogicalId('airfree_panel');
+            $panelEq->setName('Airfree');
+        }
+        if ($defaultObjectId !== null && !$panelEq->getObject_id()) {
+            $panelEq->setObject_id($defaultObjectId);
+        }
+        $panelEq->setIsEnable(1);
+        $panelEq->setIsVisible(1);
+        $panelEq->setCategory('heating', 1);
+        $panelEq->setConfiguration('isPanelButton', 1);
+        $panelEq->save();
+        if (method_exists($panelEq, 'emptyCacheWidget')) {
+            $panelEq->emptyCacheWidget();
+        }
+
+        // Masquer d'office toutes les tuiles de zones existantes sur le Dashboard
+        foreach (self::byType('airfree') as $existingEq) {
+            if ($existingEq->getLogicalId() !== 'airfree_panel') {
+                $existingEq->setIsVisible(0);
+                $existingEq->setConfiguration('isPanelButton', 0);
+                $existingEq->save();
+                if (method_exists($existingEq, 'emptyCacheWidget')) {
+                    $existingEq->emptyCacheWidget();
+                }
+            }
+        }
+
+        // 2. Créer / mettre à jour les équipements de zones (masqués par défaut sur le Dashboard pour éviter d'avoir 10 tuiles)
         foreach ($data['systems'] as $sys) {
             $discoveredSysIds[] = $sys['systemID'];
             foreach ($sys['zones'] as $z) {
@@ -288,9 +468,11 @@ class airfree extends eqLogic {
                     $eqLogic->setLogicalId($logicalId);
                     $eqLogic->setName($sys['groupName'] . ' - ' . $z['name']);
                     $eqLogic->setIsEnable(1);
-                    $eqLogic->setIsVisible($z['available'] ? 1 : 0);
                     $eqLogic->setCategory('heating', 1);
                 }
+                // Masquer les zones individuelles du Dashboard pour ne laisser que le bouton d'accès au Panel
+                $eqLogic->setIsVisible(0);
+                $eqLogic->setConfiguration('isPanelButton', 0);
                 $eqLogic->setConfiguration('systemID', $z['systemID']);
                 $eqLogic->setConfiguration('zoneID', $z['zoneID']);
                 $eqLogic->setConfiguration('groupName', $sys['groupName']);
@@ -427,6 +609,29 @@ class airfree extends eqLogic {
             return $replace;
         }
         $version = jeedom::versionAlias($_version);
+
+        // Cas 1 : Tuile unique de raccourci "Airfree" qui ouvre directement le Panel complet
+        if ($this->getLogicalId() === 'airfree_panel' || intval($this->getConfiguration('isPanelButton', 0)) === 1) {
+            $panelUrl = ($version === 'mobile') ? 'index.php?v=m&m=airfree&p=airfree' : 'index.php?v=d&m=airfree&p=panel';
+            $uid = $replace['#uid#'];
+            $id  = $replace['#id#'];
+            $html = '<div class="eqLogic eqLogic-widget allowResize airfree-launcher-card" data-eqType="airfree" data-eqLogic_id="' . $id . '" data-eqLogic_uid="' . $uid . '" data-version="' . $version . '" '
+                  . 'onclick="window.location.href=\'' . $panelUrl . '\'" '
+                  . 'style="width: 220px; height: 110px; border-radius: 16px !important; padding: 14px 16px !important; background: linear-gradient(135deg, #064838 0%, #0c5e49 100%) !important; color: #ffffff !important; cursor: pointer; position: relative; overflow: hidden; box-sizing: border-box; box-shadow: 0 4px 12px rgba(6,72,56,0.28);">'
+                  . '<div style="display:flex;align-items:center;justify-content:space-between;position:relative;z-index:2;">'
+                  . '  <span style="font-size:16px !important;font-weight:800 !important;color:#ffffff !important;letter-spacing:-0.3px;">Airfree</span>'
+                  . '  <span style="background:rgba(255,255,255,0.18) !important;color:#ffffff !important;padding:3px 8px;border-radius:999px;font-size:11px !important;font-weight:700 !important;">API Locale</span>'
+                  . '</div>'
+                  . '<div style="margin-top:6px;font-size:12px !important;color:rgba(255,255,255,0.85) !important;position:relative;z-index:2;">Respirez ! C\'est Open-Source !</div>'
+                  . '<div style="position:absolute;bottom:12px;left:16px;right:16px;z-index:2;">'
+                  . '  <a href="' . $panelUrl . '" style="display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:7px 12px;border-radius:10px;background:#ffffff !important;color:#064838 !important;font-size:12.5px !important;font-weight:800 !important;text-decoration:none !important;box-shadow:0 2px 6px rgba(0,0,0,0.15);">'
+                  . '    <span>Ouvrir le panneau CVC</span>'
+                  . '    <span style="color:#064838 !important;">→</span>'
+                  . '  </a>'
+                  . '</div>'
+                  . '</div>';
+            return $this->postToHtml($_version, $html);
+        }
 
         $onCmd       = $this->getCmd('info', 'on');
         $roomTempCmd = $this->getCmd('info', 'roomTemp');

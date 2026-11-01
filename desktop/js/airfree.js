@@ -78,7 +78,7 @@
     if (window.AIRFREE_API_URL) {
       return window.AIRFREE_API_URL;
     }
-    if (typeof jeedom !== 'undefined' && window.location.pathname.indexOf('index.php') !== -1) {
+    if (typeof jeedom !== 'undefined' || window.location.pathname.indexOf('index.php') !== -1) {
       return 'plugins/airfree/core/ajax/airfree.ajax.php';
     }
     return 'api.php';
@@ -1198,11 +1198,17 @@
 
   window.AirfreeApp = {
     state: state,
+    _pollTimer: null,
     init: function () {
       loadAirfreeState(false);
-      // Rafraîchissement automatique toutes les 15 secondes
-      setInterval(function () {
-        loadAirfreeState(true);
+      if (this._pollTimer) {
+        clearInterval(this._pollTimer);
+      }
+      // Rafraîchissement automatique toutes les 15 secondes tant que le composant est présent dans le DOM
+      this._pollTimer = setInterval(function () {
+        if (document.getElementById('airfree-app-root')) {
+          loadAirfreeState(true);
+        }
       }, 15000);
     },
     switchTab: function (tabName) {
@@ -1336,9 +1342,13 @@
     }
   };
 
-  document.addEventListener('DOMContentLoaded', function () {
-    if (document.getElementById('airfree-app-root')) {
-      window.AirfreeApp.init();
-    }
-  });
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () {
+      if (document.getElementById('airfree-app-root')) {
+        window.AirfreeApp.init();
+      }
+    });
+  } else if (document.getElementById('airfree-app-root')) {
+    window.AirfreeApp.init();
+  }
 })(window);

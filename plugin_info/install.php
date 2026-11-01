@@ -32,6 +32,12 @@ function airfree_install() {
     }
     config::save('displayDesktopPanel', 1, 'airfree');
     config::save('displayMobilePanel', 1, 'airfree');
+    try {
+        if (class_exists('airfree')) {
+            airfree::synchronize();
+        }
+    } catch (Exception $e) {
+    }
 }
 
 function airfree_update() {
@@ -45,6 +51,15 @@ function airfree_update() {
         $cron->setSchedule('*/5 * * * *');
         $cron->setTimeout(2);
         $cron->save();
+    }
+    config::save('displayDesktopPanel', 1, 'airfree');
+    config::save('displayMobilePanel', 1, 'airfree');
+    try {
+        require_once dirname(__FILE__) . '/../core/class/airfree.class.php';
+        if (class_exists('airfree')) {
+            airfree::synchronize();
+        }
+    } catch (Exception $e) {
     }
 }
 

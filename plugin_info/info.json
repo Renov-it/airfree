@@ -1,16 +1,16 @@
 {
   "id": "airfree",
-  "name": "Airfree Local API",
-  "description": "Plugin de pilotage local des systèmes de régulation CVC Airfree (Webserver Local API port 3000) avec interface graphique Desktop & Mobile inspirée d'Airfree Cloud.",
+  "name": "Airfree - Respirez ! C'est Open-Source !",
+  "description": "Plugin de pilotage 100 % local des systèmes de régulation CVC (API locale port 3000 /api/v1/hvac) avec interface graphique Desktop & Mobile.",
   "licence": "GPL-3.0",
-  "author": "Laurent / Antigravity",
+  "author": "Renov-it",
   "require": "4.2",
-  "category": "climate",
+  "category": "heating",
   "hasDependency": false,
   "hasOwnDeamon": false,
   "maxDependancyInstallTime": 0,
-  "documentation": "https://github.com/jeedom/documentations",
-  "changelog": "https://github.com/jeedom/documentations",
+  "documentation": "https://github.com/Renov-it/plugin-airfree/blob/develop/docs/fr_FR/index.md",
+  "changelog": "https://github.com/Renov-it/plugin-airfree/commits/develop",
   "display": "panel",
   "mobile": "airfree"
 }
